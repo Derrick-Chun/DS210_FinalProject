@@ -5,7 +5,6 @@ use std::collections::HashMap;
 pub fn bfs(graph: &Graph, start: i32, end: i32) -> Option<usize> {
     let mut queue = VecDeque::new();
     let mut visited = HashMap::new();
-
     queue.push_back((start, 0));
     visited.insert(start, true);
 
@@ -13,7 +12,6 @@ pub fn bfs(graph: &Graph, start: i32, end: i32) -> Option<usize> {
         if node == end {
             return Some(distance);
         }
-
         if let Some(neighbors) = graph.adjacency_list.get(&node) {
             for &neighbor in neighbors {
                 if !visited.contains_key(&neighbor) {
@@ -23,6 +21,5 @@ pub fn bfs(graph: &Graph, start: i32, end: i32) -> Option<usize> {
             }
         }
     }
-
     None
 }

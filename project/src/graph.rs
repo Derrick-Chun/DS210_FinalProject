@@ -3,7 +3,6 @@ use std::collections::HashMap;
 pub struct Graph {
     pub adjacency_list: HashMap<i32, Vec<i32>>,
 }
-
 impl Graph {
     pub fn new(edges: &[(i32, i32, i32)]) -> Self {
         let mut adjacency_list = HashMap::new();
