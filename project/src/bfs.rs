@@ -7,7 +7,6 @@ pub fn bfs(graph: &Graph, start: i32, end: i32) -> Option<usize> {
     let mut visited = HashMap::new();
     queue.push_back((start, 0));
     visited.insert(start, true);
-
     while let Some((node, distance)) = queue.pop_front() {
         if node == end {
             return Some(distance);
