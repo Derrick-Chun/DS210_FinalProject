@@ -12,6 +12,8 @@ pub fn degree_distribution(graph: &Graph) -> HashMap<usize, usize> {
     distribution
 }
 
+// Degree distribution plotted as a histogram that is limited to degrees in [1 to 120]
+// Output: "degree_distribution_histogram.png"
 pub fn plot_degree_distribution(distribution: &HashMap<usize, usize>) {
     println!("Degree Distribution:");
     for (degree, count) in distribution {
@@ -46,14 +48,15 @@ pub fn plot_degree_distribution(distribution: &HashMap<usize, usize>) {
     ).unwrap();
 }
 
+// Computes a vector of (vertex, degree, avg_trust) from data of edges
 pub fn trust_correlation_data(edges: &[(i32, i32, i32)]) -> Vec<(i32, usize, f64)> {
     let mut trust_to_neighbors = HashMap::new();
-    // Collecting trust ratings for each vertex based on source
+    // Collects trust ratings for each source vertex
     for &(source, _target, weight) in edges {
         trust_to_neighbors.entry(source).or_insert_with(Vec::new).push(weight);
     }
-    // Computing degree and average trust
     let mut results = Vec::new();
+    // Each vertex's degree and average trust is computed
     for (vertex, trust_ratings) in trust_to_neighbors {
         let degree = trust_ratings.len();
         let avg_trust: f64 = trust_ratings.iter().map(|&x| x as f64).sum::<f64>() / degree as f64;
@@ -62,9 +65,10 @@ pub fn trust_correlation_data(edges: &[(i32, i32, i32)]) -> Vec<(i32, usize, f64
     results
 }
 
+// Trust_correlation_data is called to plot and print out a scatter plot
+// Output: trust_vs_degree.png
 pub fn trust_correlation(edges: &[(i32, i32, i32)]) {
     let data = trust_correlation_data(edges);
-    // Setting points as (avg_trust, degree) to swap the axes for more neat looking graph
     let points: Vec<_> = data.iter().map(|(_, degree, avg_trust)| (*avg_trust, *degree as f64)).collect();
     println!("Trust Rating vs Number of Connections:");
     for (vertex, degree, avg_trust) in &data {
@@ -72,18 +76,15 @@ pub fn trust_correlation(edges: &[(i32, i32, i32)]) {
     }
     let root_area = BitMapBackend::new("trust_vs_degree.png", (640, 480)).into_drawing_area();
     root_area.fill(&WHITE).unwrap();
-
+    // Max bounds for axes
     let max_avg_trust = points.iter().map(|(x, _)| *x).fold(f64::NAN, f64::max);
     let max_degree = points.iter().map(|(_, y)| *y).fold(f64::NAN, f64::max);
-
     let max_avg_trust = if max_avg_trust.is_nan() { 0.0 } else { max_avg_trust };
     let max_degree = if max_degree.is_nan() { 0.0 } else { max_degree };
-
     let mut chart = ChartBuilder::on(&root_area)
         .caption("Degree vs Average Trust", ("Arial", 20).into_font())
         .x_label_area_size(40)
         .y_label_area_size(40)
-        // X-axis: avg_trust & Y-axis: degree
         .build_cartesian_2d(0f64..(max_avg_trust + 1.0), 0f64..(max_degree + 1.0))
         .unwrap();
     chart.configure_mesh()
@@ -91,6 +92,7 @@ pub fn trust_correlation(edges: &[(i32, i32, i32)]) {
         .y_desc("Degree")
         .draw()
         .unwrap();
+    // Vertexes as a small green circle
     chart.draw_series(
         points.iter().map(|(x, y)| Circle::new((*x, *y), 3, GREEN.filled()))
     ).unwrap();

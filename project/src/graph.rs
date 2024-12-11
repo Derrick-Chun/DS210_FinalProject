@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
+// Undirected graph structure using an adjacency list
 pub struct Graph {
     pub adjacency_list: HashMap<i32, Vec<i32>>,
 }
+
 impl Graph {
+    // To construct graph with slice of edges (source, target, weight)
     pub fn new(edges: &[(i32, i32, i32)]) -> Self {
         let mut adjacency_list = HashMap::new();
         for &(source, target, _weight) in edges {
